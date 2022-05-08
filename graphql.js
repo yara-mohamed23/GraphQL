@@ -1,33 +1,46 @@
-const { ApollServer, gql } = require('apollo-server')
+const { ApolloServer, gql } = require('apollo-server')
 
-const Posts = [{
-    title: "post1",
-    id: "1"
+const posts = [{
+    id: "1",
+    title: "post1"
+
 }, {
-    title: "post2",
-    id: "2"
+    id: "2",
+    title: "post2"
+
 }]
 
 const typeDefs = gql `
 type Post{
-    id:string,
-    title:string,
+    id:String,
+    title:String,
 }
 
 type Query{
     posts:[Post]
+}
+
+type Mutation{
+    addPost(title:String):Post
 }
 `
 
 const resolvers = {
     Query: {
         posts: () => posts
+    },
+
+    Mutation: {
+        addPost: (_, { title }) => {
+            posts.push({ id: posts.length + 1, title })
+            return posts[posts.length - 1]
+        }
     }
 }
 
-const server = new ApollServer({
+const server = new ApolloServer({
     resolvers,
     typeDefs
 })
 
-server.listen(8000, () => {})
+server.listen(8000, () => { console.log("Hello") })
